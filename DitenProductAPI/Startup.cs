@@ -1,3 +1,5 @@
+using DitenProductAPI.Interfaces;
+using DitenProductAPI.Managers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -30,12 +32,20 @@ namespace DitenProductAPI
 
             services.AddControllers();
 
+            var key = "this is a my test key";
+            services.AddSingleton<IJWTAuthenticateManager>(new JWTAuthenticateManager(key));
+
             services.AddDbContext<Context>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
+
+            services.AddControllers().AddNewtonsoftJson();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "DitenProductAPI", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "JwtTokenAuthentication", Version = "v1" });
             });
+            services.AddSingleton<IConfiguration>(Configuration);
+            
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +61,8 @@ namespace DitenProductAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
