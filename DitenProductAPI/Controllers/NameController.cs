@@ -1,4 +1,5 @@
 ﻿using DitenProductAPI.Interfaces;
+using DitenProductAPI.MyEntities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -37,12 +38,12 @@ namespace DitenProductAPI.Controllers
             return "value";
         }
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] UserCred userCred)
+        public IActionResult Authenticate([FromBody] User User)
         {
             var users = context.Users.ToList();
             foreach (var user in users)
             {
-                if (user.UserName == userCred.username && user.Password == userCred.password)
+                if (user.UserName == User.UserName && user.Password == User.Password)
                 {
                     var token = _jWTAuthenticateManager.createToken(user);
                     user.ApiToken = token;
